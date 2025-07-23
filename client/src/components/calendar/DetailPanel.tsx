@@ -144,15 +144,15 @@ export default function DetailPanel({ data }: DetailPanelProps) {
         </div>
       </motion.div>
 
-      {/* Liquidity Indicators */}
+      {/* Liquidity Metrics */}
       <motion.div variants={itemVariants} className="mb-6">
         <h4 className="text-md font-medium text-white mb-3 flex items-center">
           <Droplets className="w-4 h-4 mr-2" />
-          Liquidity Metrics
+          Liquidity Analysis
         </h4>
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-gray-400 text-sm">Volume (24h)</span>
+            <span className="text-gray-400 text-sm">24h Volume</span>
             <span className="text-white font-medium">{formatVolume(data.liquidity.volume24h)}</span>
           </div>
           <div className="flex items-center justify-between">

@@ -5,6 +5,11 @@ import { getCurrentMonthDays } from '@/lib/date-utils';
 export function useCalendarState() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [selectedDateRange, setSelectedDateRange] = useState<{ start: string | null; end: string | null }>({
+    start: null,
+    end: null,
+  });
+  const [isRangeSelection, setIsRangeSelection] = useState(false);
   const [viewPeriod, setViewPeriod] = useState<ViewPeriod>('daily');
   const [selectedSymbol, setSelectedSymbol] = useState<CryptoPair>('BTCUSDT');
   const [showMetrics, setShowMetrics] = useState({
@@ -12,6 +17,7 @@ export function useCalendarState() {
     liquidity: true,
     performance: true,
   });
+  const [colorScheme, setColorScheme] = useState<'default' | 'colorblind' | 'high-contrast'>('default');
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -33,7 +39,27 @@ export function useCalendarState() {
   };
 
   const selectDate = (date: string) => {
-    setSelectedDate(date);
+    if (isRangeSelection) {
+      if (!selectedDateRange.start || (selectedDateRange.start && selectedDateRange.end)) {
+        setSelectedDateRange({ start: date, end: null });
+      } else {
+        const start = new Date(selectedDateRange.start);
+        const end = new Date(date);
+        if (end < start) {
+          setSelectedDateRange({ start: date, end: selectedDateRange.start });
+        } else {
+          setSelectedDateRange({ start: selectedDateRange.start, end: date });
+        }
+      }
+    } else {
+      setSelectedDate(date);
+    }
+  };
+
+  const toggleRangeSelection = () => {
+    setIsRangeSelection(!isRangeSelection);
+    setSelectedDateRange({ start: null, end: null });
+    setSelectedDate(null);
   };
 
   const toggleMetric = (metric: keyof typeof showMetrics) => {
@@ -46,16 +72,21 @@ export function useCalendarState() {
   return {
     currentDate,
     selectedDate,
+    selectedDateRange,
+    isRangeSelection,
     viewPeriod,
     selectedSymbol,
     showMetrics,
+    colorScheme,
     calendarDays,
     year,
     month,
     navigateMonth,
     selectDate,
+    toggleRangeSelection,
     setViewPeriod,
     setSelectedSymbol,
+    setColorScheme,
     toggleMetric,
   };
 }

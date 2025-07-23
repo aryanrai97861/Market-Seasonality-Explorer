@@ -96,3 +96,36 @@ export function getMonthName(month: number): string {
   ];
   return months[month];
 }
+
+export function calculateStandardDeviation(values: number[]): number {
+  if (values.length === 0) return 0;
+  const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
+  const variance = values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / values.length;
+  return Math.sqrt(variance);
+}
+
+export function calculateMovingAverage(values: number[], period: number): number {
+  if (values.length < period) return values.reduce((sum, val) => sum + val, 0) / values.length;
+  const slice = values.slice(-period);
+  return slice.reduce((sum, val) => sum + val, 0) / period;
+}
+
+export function calculateRSI(prices: number[], period: number = 14): number {
+  if (prices.length < period + 1) return 50;
+  
+  const changes = prices.slice(1).map((price, i) => price - prices[i]);
+  const gains = changes.map(change => change > 0 ? change : 0);
+  const losses = changes.map(change => change < 0 ? -change : 0);
+  
+  const avgGain = gains.slice(-period).reduce((sum, gain) => sum + gain, 0) / period;
+  const avgLoss = losses.slice(-period).reduce((sum, loss) => sum + loss, 0) / period;
+  
+  if (avgLoss === 0) return 100;
+  const rs = avgGain / avgLoss;
+  return 100 - (100 / (1 + rs));
+}
+
+export function calculateVIXLike(returns: number[]): number {
+  const variance = calculateStandardDeviation(returns) ** 2;
+  return Math.sqrt(variance * 252) * 100; // Annualized volatility
+}

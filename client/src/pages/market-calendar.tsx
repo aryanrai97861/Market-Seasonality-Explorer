@@ -14,6 +14,8 @@ import DetailPanel from '@/components/calendar/DetailPanel';
 import QuickStats from '@/components/calendar/QuickStats';
 import SymbolLegend from '@/components/calendar/SymbolLegend';
 import { CalendarViewType } from '@/types/calendar-views';
+import AlertSystem from '@/components/calendar/AlertSystem';
+import ComparisonTool from '@/components/calendar/ComparisonTool';
 
 const pageVariants = {
   initial: { opacity: 0, y: 20 },
@@ -50,7 +52,7 @@ export default function MarketCalendar() {
   const detailPanelData = useDetailPanelData(selectedSymbol, selectedDate);
   const quickStatsData = useQuickStats(selectedSymbol);
   const { toast } = useToast();
-  
+
   // WebSocket connection for real-time data
   const { isConnected } = useBinanceWebSocket(selectedSymbol, true);
 
@@ -104,7 +106,7 @@ export default function MarketCalendar() {
             selectDate(currentMonthDays[selectedIndex - 1].date);
           }
           break;
-          
+
         case 'ArrowRight':
           e.preventDefault();
           if (e.ctrlKey || e.metaKey) {
@@ -115,7 +117,7 @@ export default function MarketCalendar() {
             selectDate(currentMonthDays[selectedIndex + 1].date);
           }
           break;
-          
+
         case 'ArrowUp':
           e.preventDefault();
           if (selectedIndex >= 7) {
@@ -123,7 +125,7 @@ export default function MarketCalendar() {
             selectDate(currentMonthDays[selectedIndex - 7].date);
           }
           break;
-          
+
         case 'ArrowDown':
           e.preventDefault();
           if (selectedIndex >= 0 && selectedIndex + 7 < currentMonthDays.length) {
@@ -131,7 +133,7 @@ export default function MarketCalendar() {
             selectDate(currentMonthDays[selectedIndex + 7].date);
           }
           break;
-          
+
         case 'Home':
           e.preventDefault();
           // Navigate to first day of month
@@ -139,7 +141,7 @@ export default function MarketCalendar() {
             selectDate(currentMonthDays[0].date);
           }
           break;
-          
+
         case 'End':
           e.preventDefault();
           // Navigate to last day of month
@@ -147,12 +149,12 @@ export default function MarketCalendar() {
             selectDate(currentMonthDays[currentMonthDays.length - 1].date);
           }
           break;
-          
+
         case 'Escape':
           e.preventDefault();
           selectDate('');
           break;
-          
+
         case ' ':
         case 'Enter':
           e.preventDefault();
@@ -199,7 +201,7 @@ export default function MarketCalendar() {
       className="min-h-screen bg-gradient-dark"
     >
       <AppHeader isConnected={isConnected} currentSymbol={selectedSymbol} />
-      
+
       <div className="container mx-auto p-6 space-y-6">
         <ControlPanel
           selectedSymbol={selectedSymbol}
@@ -211,7 +213,7 @@ export default function MarketCalendar() {
         />
 
         <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
-          <div className="xl:col-span-3">
+          <div className="xl:col-span-3" id="calendar-container">
             <EnhancedCalendar
               year={year}
               month={month}
@@ -223,15 +225,23 @@ export default function MarketCalendar() {
               currentView={currentView}
               onViewChange={setCurrentView}
             />
+
+            <div className="mt-6">
+              <ComparisonTool
+                currentSymbol={selectedSymbol}
+                calendarDays={calendarDays}
+                onSymbolCompare={setSelectedSymbol}
+              />
+            </div>
           </div>
-          
+
           <div className="xl:col-span-1">
             <DetailPanel data={detailPanelData} />
           </div>
         </div>
 
         <QuickStats data={quickStatsData} isLoading={isMarketDataLoading} />
-        
+
         <SymbolLegend />
       </div>
     </motion.div>

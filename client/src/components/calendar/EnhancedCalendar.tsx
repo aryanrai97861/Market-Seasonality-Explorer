@@ -8,6 +8,7 @@ import ViewSelector from './ViewSelector';
 import CalendarGrid from './CalendarGrid';
 import WeeklyView from './WeeklyView';
 import MonthlyView from './MonthlyView';
+import { useEffect, useRef } from 'react';
 
 interface EnhancedCalendarProps {
   year: number;
@@ -54,6 +55,56 @@ export default function EnhancedCalendar({
   currentView,
   onViewChange
 }: EnhancedCalendarProps) {
+  const calendarRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!calendarRef.current?.contains(document.activeElement)) return;
+      
+      const currentMonthDays = calendarDays.filter(day => day.isCurrentMonth);
+      const selectedIndex = selectedDate ? currentMonthDays.findIndex(day => day.date === selectedDate) : -1;
+      
+      switch (e.key) {
+        case 'ArrowLeft':
+          e.preventDefault();
+          if (selectedIndex > 0) {
+            onDateSelect(currentMonthDays[selectedIndex - 1].date);
+          }
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          if (selectedIndex < currentMonthDays.length - 1) {
+            onDateSelect(currentMonthDays[selectedIndex + 1].date);
+          }
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          if (selectedIndex >= 7) {
+            onDateSelect(currentMonthDays[selectedIndex - 7].date);
+          }
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          if (selectedIndex + 7 < currentMonthDays.length) {
+            onDateSelect(currentMonthDays[selectedIndex + 7].date);
+          }
+          break;
+        case 'Enter':
+          e.preventDefault();
+          if (selectedDate) {
+            onDateSelect(selectedDate);
+          }
+          break;
+        case 'Escape':
+          e.preventDefault();
+          (document.activeElement as HTMLElement)?.blur();
+          break;
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [selectedDate, calendarDays, onDateSelect]);
   
   const handleMonthSelect = (newMonth: number) => {
     const currentMonthIndex = new Date().getMonth();
@@ -116,7 +167,7 @@ export default function EnhancedCalendar({
   };
 
   return (
-    <div className="space-y-6">
+    <div ref={calendarRef} tabIndex={0} className="space-y-6 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg p-2">
       {/* Enhanced Header */}
       <motion.div
         variants={headerVariants}

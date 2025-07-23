@@ -43,6 +43,16 @@
   --volatility-low: linear-gradient(135deg, hsl(142, 76%, 36%) 0%, hsl(142, 70%, 45%) 100%);
   --volatility-medium: linear-gradient(135deg, hsl(38, 92%, 50%) 0%, hsl(32, 95%, 44%) 100%);
   --volatility-high: linear-gradient(135deg, hsl(0, 72%, 51%) 0%, hsl(0, 74%, 42%) 100%);
+  
+  /* Colorblind friendly scheme */
+  --volatility-low-cb: linear-gradient(135deg, hsl(200, 80%, 40%) 0%, hsl(200, 70%, 50%) 100%);
+  --volatility-medium-cb: linear-gradient(135deg, hsl(45, 100%, 50%) 0%, hsl(50, 100%, 45%) 100%);
+  --volatility-high-cb: linear-gradient(135deg, hsl(15, 100%, 50%) 0%, hsl(20, 100%, 45%) 100%);
+  
+  /* High contrast scheme */
+  --volatility-low-hc: linear-gradient(135deg, #000000 0%, #333333 100%);
+  --volatility-medium-hc: linear-gradient(135deg, #666666 0%, #999999 100%);
+  --volatility-high-hc: linear-gradient(135deg, #ffffff 0%, #cccccc 100%);
 }
 
 .dark {
@@ -98,6 +108,35 @@
 
   .volatility-high {
     background: var(--volatility-high);
+  }
+  
+  /* Colorblind friendly variants */
+  .colorblind .volatility-low {
+    background: var(--volatility-low-cb);
+  }
+  
+  .colorblind .volatility-medium {
+    background: var(--volatility-medium-cb);
+  }
+  
+  .colorblind .volatility-high {
+    background: var(--volatility-high-cb);
+  }
+  
+  /* High contrast variants */
+  .high-contrast .volatility-low {
+    background: var(--volatility-low-hc);
+    color: white;
+  }
+  
+  .high-contrast .volatility-medium {
+    background: var(--volatility-medium-hc);
+    color: white;
+  }
+  
+  .high-contrast .volatility-high {
+    background: var(--volatility-high-hc);
+    color: black;
   }
 
   .calendar-cell {
