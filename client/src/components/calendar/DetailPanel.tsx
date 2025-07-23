@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { TrendingUp, Activity, Droplets } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import OrderbookPanel from './OrderbookPanel';
+import IndicatorMiniChart from './IndicatorMiniChart';
 import { DetailPanelData } from '@/types/market-data';
 import { formatCurrency, formatVolume, formatPercentage } from '@/lib/date-utils';
 
@@ -176,15 +177,57 @@ export default function DetailPanel({ data }: DetailPanelProps) {
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-gray-400 text-sm">RSI (14)</span>
-            <span className="text-white font-medium">{data.technical.rsi.toFixed(1)}</span>
+            <span className="flex items-center gap-2">
+              <span className="text-white font-medium">{data.technical.rsi.toFixed(1)}</span>
+              {data.technical.rsiSeries && (
+                <IndicatorMiniChart
+                  data={data.technical.rsiSeries}
+                  color="#60a5fa"
+                  overbought={70}
+                  oversold={30}
+                  min={0}
+                  max={100}
+                  label="RSI"
+                />
+              )}
+            </span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-gray-400 text-sm">MA (20)</span>
-            <span className="text-white font-medium">{formatCurrency(data.technical.ma20)}</span>
+            <span className="flex items-center gap-2">
+              <span className="text-white font-medium">{formatCurrency(data.technical.ma20)}</span>
+              {data.technical.ma20Series && data.technical.closes && (
+                <IndicatorMiniChart
+                  data={data.technical.closes}
+                  color="#38bdf8"
+                  label="Price"
+                />
+              )}
+            </span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-gray-400 text-sm">MACD</span>
-            <span className={`font-medium ${getMacdColor()}`}>{data.technical.macd}</span>
+            <span className="flex items-center gap-2">
+              <span className={`font-medium ${getMacdColor()}`}>{data.technical.macd}</span>
+              {data.technical.macdSeries && data.technical.macdSignalSeries && (
+                <svg width={80} height={36} className="block">
+                  {/* MACD line */}
+                  <polyline
+                    fill="none"
+                    stroke="#60a5fa"
+                    strokeWidth={2}
+                    points={data.technical.macdSeries.map((v, i, arr) => typeof v === 'number' ? `${(i/(arr.length-1))*80},${36-((v+10)/20)*36}` : '').join(' ')}
+                  />
+                  {/* Signal line */}
+                  <polyline
+                    fill="none"
+                    stroke="#fbbf24"
+                    strokeWidth={1.5}
+                    points={data.technical.macdSignalSeries.map((v, i, arr) => typeof v === 'number' ? `${(i/(arr.length-1))*80},${36-((v+10)/20)*36}` : '').join(' ')}
+                  />
+                </svg>
+              )}
+            </span>
           </div>
         </div>
       </motion.div>

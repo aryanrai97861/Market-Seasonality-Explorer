@@ -17,7 +17,7 @@ export function getCurrentMonthDays(year: number, month: number): CalendarDay[] 
     const dayNumber = daysInPrevMonth - i;
     const date = new Date(year, month - 1, dayNumber);
     days.push({
-      date: date.toISOString().split('T')[0],
+      date: date.toLocaleDateString('en-CA'),
       dayNumber,
       isCurrentMonth: false,
       isToday: false,
@@ -34,7 +34,7 @@ export function getCurrentMonthDays(year: number, month: number): CalendarDay[] 
     const isToday = date.toDateString() === today.toDateString();
     
     days.push({
-      date: date.toISOString().split('T')[0],
+      date: date.toLocaleDateString('en-CA'),
       dayNumber: day,
       isCurrentMonth: true,
       isToday,
@@ -50,7 +50,7 @@ export function getCurrentMonthDays(year: number, month: number): CalendarDay[] 
   for (let day = 1; day <= remainingCells; day++) {
     const date = new Date(year, month + 1, day);
     days.push({
-      date: date.toISOString().split('T')[0],
+      date: date.toLocaleDateString('en-CA'),
       dayNumber: day,
       isCurrentMonth: false,
       isToday: false,

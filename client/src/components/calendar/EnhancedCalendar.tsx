@@ -63,32 +63,32 @@ export default function EnhancedCalendar({
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!calendarRef.current?.contains(document.activeElement)) return;
       
-      const currentMonthDays = calendarDays.filter(day => day.isCurrentMonth);
-      const selectedIndex = selectedDate ? currentMonthDays.findIndex(day => day.date === selectedDate) : -1;
+      const allDays = calendarDays;
+      const selectedIndex = selectedDate ? allDays.findIndex(day => day.date === selectedDate) : -1;
       
       switch (e.key) {
         case 'ArrowLeft':
           e.preventDefault();
           if (selectedIndex > 0) {
-            onDateSelect(currentMonthDays[selectedIndex - 1].date);
+            onDateSelect(allDays[selectedIndex - 1].date);
           }
           break;
         case 'ArrowRight':
           e.preventDefault();
-          if (selectedIndex < currentMonthDays.length - 1) {
-            onDateSelect(currentMonthDays[selectedIndex + 1].date);
+          if (selectedIndex < allDays.length - 1 && selectedIndex !== -1) {
+            onDateSelect(allDays[selectedIndex + 1].date);
           }
           break;
         case 'ArrowUp':
           e.preventDefault();
-          if (selectedIndex >= 7) {
-            onDateSelect(currentMonthDays[selectedIndex - 7].date);
+          if (selectedIndex >= 7 && selectedIndex !== -1) {
+            onDateSelect(allDays[selectedIndex - 7].date);
           }
           break;
         case 'ArrowDown':
           e.preventDefault();
-          if (selectedIndex + 7 < currentMonthDays.length) {
-            onDateSelect(currentMonthDays[selectedIndex + 7].date);
+          if (selectedIndex + 7 < allDays.length && selectedIndex !== -1) {
+            onDateSelect(allDays[selectedIndex + 7].date);
           }
           break;
         case 'Enter':
@@ -103,7 +103,7 @@ export default function EnhancedCalendar({
           break;
       }
     };
-
+  
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [selectedDate, calendarDays, onDateSelect]);

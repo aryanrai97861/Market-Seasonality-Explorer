@@ -40,6 +40,12 @@ export interface TechnicalIndicators {
   rsi: number;
   ma20: number;
   macd: 'Bullish' | 'Bearish' | 'Neutral';
+  // Visualization arrays
+  rsiSeries?: (number | null)[];
+  ma20Series?: (number | null)[];
+  macdSeries?: (number | null)[];
+  macdSignalSeries?: (number | null)[];
+  closes?: number[];
 }
 
 export interface DetailPanelData {

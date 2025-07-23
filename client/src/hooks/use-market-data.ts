@@ -1,6 +1,8 @@
 import { useQuery, useQueries } from '@tanstack/react-query';
 import { binanceAPI } from '@/lib/binance-api';
 import { MarketDataPoint, DetailPanelData, QuickStatsData, CryptoPair } from '@/types/market-data';
+import { calculateRSI, calculateMovingAverage } from '@/lib/date-utils';
+import { calculateEMA, calculateMACD } from '@/lib/indicators';
 
 export function useMarketData(symbol: CryptoPair, days: number = 31) {
   return useQuery({
@@ -21,18 +23,38 @@ export function use24hrTicker(symbol: CryptoPair) {
 }
 
 export function useDetailPanelData(symbol: CryptoPair, selectedDate: string | null): DetailPanelData | null {
-  const { data: marketData } = useMarketData(symbol);
+  // Fetch more days to allow for rolling calculations (e.g. 50)
+  const { data: marketData } = useMarketData(symbol, 50);
   const { data: ticker } = use24hrTicker(symbol);
 
   if (!marketData || !ticker || !selectedDate) return null;
 
-  const dayData = marketData.find(d => d.date === selectedDate);
-  if (!dayData) return null;
+  // Find index for selected date
+  const idx = marketData.findIndex(d => d.date === selectedDate);
+  if (idx === -1) return null;
 
-  // Calculate technical indicators (simplified)
-  const rsi = Math.min(100, Math.max(0, 50 + (dayData.priceChangePercent * 2)));
-  const ma20 = marketData.slice(-20).reduce((sum, d) => sum + d.closePrice, 0) / Math.min(20, marketData.length);
-  
+  // Prepare arrays for indicator calculations up to and including selected day
+  const closes = marketData.slice(0, idx + 1).map(d => d.closePrice);
+
+  // Accurate RSI (last value)
+  const rsi = calculateRSI(closes, 14);
+  // Accurate MA20 (last value)
+  const ma20 = calculateMovingAverage(closes, 20);
+  // Accurate MACD (value, signal, histogram)
+  const { macd, signal } = calculateMACD(closes);
+  const macdValue = macd[macd.length - 1];
+  const macdSignal = signal[signal.length - 1];
+
+  // MACD trend label
+  let macdLabel: 'Bullish' | 'Bearish' | 'Neutral' = 'Neutral';
+  if (macdValue !== null && macdSignal !== null) {
+    if (macdValue > macdSignal) macdLabel = 'Bullish';
+    else if (macdValue < macdSignal) macdLabel = 'Bearish';
+    else macdLabel = 'Neutral';
+  }
+
+  const dayData = marketData[idx];
+
   return {
     date: selectedDate,
     symbol,
@@ -55,9 +77,15 @@ export function useDetailPanelData(symbol: CryptoPair, selectedDate: string | nu
                    parseFloat(ticker.volume) > 10000 ? 'Fair' : 'Poor',
     },
     technical: {
-      rsi,
-      ma20,
-      macd: dayData.priceChangePercent > 0 ? 'Bullish' : dayData.priceChangePercent < 0 ? 'Bearish' : 'Neutral',
+      rsi: typeof rsi === 'number' ? rsi : 50,
+      ma20: typeof ma20 === 'number' ? ma20 : dayData.closePrice,
+      macd: macdLabel,
+      // For visualization
+      rsiSeries: closes.length >= 14 ? closes.map((_, i, arr) => i >= 13 ? calculateRSI(arr.slice(0, i + 1), 14) : null) : [],
+      ma20Series: closes.length >= 20 ? closes.map((_, i, arr) => i >= 19 ? calculateMovingAverage(arr.slice(0, i + 1), 20) : null) : [],
+      macdSeries: macd,
+      macdSignalSeries: signal,
+      closes,
     },
   };
 }
