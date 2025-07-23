@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { TrendingUp, Activity, Droplets } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import OrderbookPanel from './OrderbookPanel';
 import { DetailPanelData } from '@/types/market-data';
 import { formatCurrency, formatVolume, formatPercentage } from '@/lib/date-utils';
 
@@ -186,6 +187,11 @@ export default function DetailPanel({ data }: DetailPanelProps) {
             <span className={`font-medium ${getMacdColor()}`}>{data.technical.macd}</span>
           </div>
         </div>
+      </motion.div>
+
+      {/* Real-Time Orderbook */}
+      <motion.div variants={itemVariants} className="mb-6">
+        <OrderbookPanel symbol={data.symbol} />
       </motion.div>
 
       {/* Action Buttons */}

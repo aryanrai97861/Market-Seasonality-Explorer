@@ -12,6 +12,7 @@ import EnhancedCalendar from '@/components/calendar/EnhancedCalendar';
 import DetailPanel from '@/components/calendar/DetailPanel';
 import QuickStats from '@/components/calendar/QuickStats';
 import SymbolLegend from '@/components/calendar/SymbolLegend';
+import OrderbookPanel from '@/components/calendar/OrderbookPanel';
 import { CalendarViewType } from '@/types/calendar-views';
 import ComparisonTool from '@/components/calendar/ComparisonTool';
 
@@ -285,6 +286,9 @@ export default function MarketCalendar() {
         </div>
 
         <QuickStats data={quickStatsData} isLoading={isMarketDataLoading} />
+
+        {/* Real-Time Orderbook Panel */}
+        <OrderbookPanel symbol={selectedSymbol} />
 
         <SymbolLegend />
       </div>
