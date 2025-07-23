@@ -27,34 +27,34 @@ export default function SymbolLegend() {
     {
       category: 'Volatility Indicators',
       items: [
-        { symbol: <Circle className="w-3 h-3 text-green-400 fill-current" />, label: 'Low Volatility (<2%)', description: 'Stable price movement' },
-        { symbol: <Zap className="w-3 h-3 text-yellow-400" />, label: 'Medium Volatility (2-5%)', description: 'Moderate price swings' },
-        { symbol: <Activity className="w-3 h-3 text-red-400" />, label: 'High Volatility (>5%)', description: 'Significant price movement' }
+        { symbol: <Circle className="w-4 h-4 text-green-400 fill-current" />, label: 'Low Volatility (<2%)', description: 'Stable price movement' },
+        { symbol: <Zap className="w-4 h-4 text-yellow-400" />, label: 'Medium Volatility (2-5%)', description: 'Moderate price swings' },
+        { symbol: <Activity className="w-4 h-4 text-red-400" />, label: 'High Volatility (>5%)', description: 'Significant price movement' }
       ]
     },
     {
       category: 'Performance Indicators',
       items: [
-        { symbol: <TrendingUp className="w-3 h-3 text-green-400" />, label: 'Strong Positive (>2%)', description: 'Significant price increase' },
-        { symbol: <ArrowDown className="w-3 h-3 text-red-400" />, label: 'Strong Negative (<-2%)', description: 'Significant price decrease' },
-        { symbol: <div className="w-2 h-2 bg-gray-400 rounded-full" />, label: 'Neutral (-2% to 2%)', description: 'Minor price change' }
+        { symbol: <TrendingUp className="w-4 h-4 text-green-400" />, label: 'Strong Positive (>2%)', description: 'Significant price increase' },
+        { symbol: <ArrowDown className="w-4 h-4 text-red-400" />, label: 'Strong Negative (<-2%)', description: 'Significant price decrease' },
+        { symbol: <div className="w-3 h-3 bg-gray-400 rounded-full" />, label: 'Neutral (-2% to 2%)', description: 'Minor price change' }
       ]
     },
     {
       category: 'Liquidity Indicators',
       items: [
         { 
-          symbol: <div className="flex space-x-0.5"><div className="w-1 h-1 bg-blue-400 rounded-full" /></div>, 
+          symbol: <div className="flex space-x-1"><div className="w-2 h-2 bg-blue-400 rounded-full" /></div>, 
           label: 'Low Volume', 
           description: '<$100M trading volume' 
         },
         { 
-          symbol: <div className="flex space-x-0.5"><div className="w-1 h-1 bg-blue-400 rounded-full" /><div className="w-1 h-1 bg-blue-400 rounded-full" /></div>, 
+          symbol: <div className="flex space-x-1"><div className="w-2 h-2 bg-blue-400 rounded-full" /><div className="w-2 h-2 bg-blue-400 rounded-full" /></div>, 
           label: 'Medium Volume', 
           description: '$100M-$1B trading volume' 
         },
         { 
-          symbol: <div className="flex space-x-0.5"><div className="w-1 h-1 bg-blue-400 rounded-full" /><div className="w-1 h-1 bg-blue-400 rounded-full" /><div className="w-1 h-1 bg-blue-400 rounded-full" /></div>, 
+          symbol: <div className="flex space-x-1"><div className="w-2 h-2 bg-blue-400 rounded-full" /><div className="w-2 h-2 bg-blue-400 rounded-full" /><div className="w-2 h-2 bg-blue-400 rounded-full" /></div>, 
           label: 'High Volume', 
           description: '>$1B trading volume' 
         }

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useCalendarState } from '@/hooks/use-calendar-state';
@@ -9,9 +9,11 @@ import { binanceAPI } from '@/lib/binance-api';
 import AppHeader from '@/components/layout/AppHeader';
 import ControlPanel from '@/components/calendar/ControlPanel';
 import CalendarGrid from '@/components/calendar/CalendarGrid';
+import EnhancedCalendar from '@/components/calendar/EnhancedCalendar';
 import DetailPanel from '@/components/calendar/DetailPanel';
 import QuickStats from '@/components/calendar/QuickStats';
 import SymbolLegend from '@/components/calendar/SymbolLegend';
+import { CalendarViewType } from '@/types/calendar-views';
 
 const pageVariants = {
   initial: { opacity: 0, y: 20 },
@@ -41,6 +43,8 @@ export default function MarketCalendar() {
     setSelectedSymbol,
     toggleMetric,
   } = useCalendarState();
+
+  const [currentView, setCurrentView] = useState<CalendarViewType>('daily');
 
   const { data: marketData, isLoading: isMarketDataLoading, error: marketDataError } = useMarketData(selectedSymbol);
   const detailPanelData = useDetailPanelData(selectedSymbol, selectedDate);
@@ -208,7 +212,7 @@ export default function MarketCalendar() {
 
         <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
           <div className="xl:col-span-3">
-            <CalendarGrid
+            <EnhancedCalendar
               year={year}
               month={month}
               calendarDays={calendarDays}
@@ -216,6 +220,8 @@ export default function MarketCalendar() {
               onDateSelect={selectDate}
               showMetrics={showMetrics}
               selectedDate={selectedDate || undefined}
+              currentView={currentView}
+              onViewChange={setCurrentView}
             />
           </div>
           

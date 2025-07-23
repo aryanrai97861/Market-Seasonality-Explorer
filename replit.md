@@ -95,3 +95,10 @@ The application prioritizes user experience with smooth animations, responsive d
 - Enhanced header with connection status showing current trading pair and connectivity
 - Improved keyboard navigation hints and user guidance
 - Implemented Framer Motion animations throughout the legend for smooth user interactions
+- Increased symbol sizes on calendar (4x4 pixels for better visibility)
+- Created comprehensive calendar with multiple view modes:
+  - Daily view: Traditional month calendar with detailed market indicators
+  - Weekly view: Week-by-week organization for pattern analysis
+  - Monthly view: Aggregated statistics for each month with overview cards
+- Added ViewSelector component with animated view switching
+- Enhanced calendar navigation with view-specific controls and descriptions

@@ -35,9 +35,9 @@ export default function CalendarCell({ day, onDateSelect, index, showMetrics = {
   const getVolatilitySymbol = () => {
     if (!day.isCurrentMonth || !showMetrics?.volatility) return null;
     switch (day.volatilityLevel) {
-      case 'low': return <Circle className="w-2 h-2 text-green-400 fill-current" />;
-      case 'medium': return <Zap className="w-2 h-2 text-yellow-400" />;
-      case 'high': return <Activity className="w-2 h-2 text-red-400" />;
+      case 'low': return <Circle className="w-4 h-4 text-green-400 fill-current" />;
+      case 'medium': return <Zap className="w-4 h-4 text-yellow-400" />;
+      case 'high': return <Activity className="w-4 h-4 text-red-400" />;
       default: return null;
     }
   };
@@ -48,9 +48,9 @@ export default function CalendarCell({ day, onDateSelect, index, showMetrics = {
     const dots = intensity === 'high' ? 3 : intensity === 'medium' ? 2 : 1;
     
     return (
-      <div className="flex space-x-0.5">
+      <div className="flex space-x-1">
         {Array.from({ length: dots }).map((_, i) => (
-          <div key={i} className="w-1 h-1 bg-blue-400 rounded-full" />
+          <div key={i} className="w-2 h-2 bg-blue-400 rounded-full" />
         ))}
       </div>
     );
@@ -58,9 +58,9 @@ export default function CalendarCell({ day, onDateSelect, index, showMetrics = {
 
   const getPerformanceSymbol = () => {
     if (!day.isCurrentMonth || !showMetrics?.performance) return null;
-    if (day.performance > 2) return <TrendingUp className="w-2 h-2 text-green-400" />;
-    if (day.performance < -2) return <ArrowDown className="w-2 h-2 text-red-400" />;
-    return <div className="w-2 h-2 bg-gray-400 rounded-full" />;
+    if (day.performance > 2) return <TrendingUp className="w-4 h-4 text-green-400" />;
+    if (day.performance < -2) return <ArrowDown className="w-4 h-4 text-red-400" />;
+    return <div className="w-3 h-3 bg-gray-400 rounded-full" />;
   };
 
   const tooltipContent = day.isCurrentMonth ? (
