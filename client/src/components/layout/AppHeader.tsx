@@ -1,8 +1,13 @@
 import { motion } from 'framer-motion';
-import { ChartLine, Download, User } from 'lucide-react';
+import { ChartLine, Download, User, Wifi, WifiOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-export default function AppHeader() {
+interface AppHeaderProps {
+  isConnected?: boolean;
+  currentSymbol?: string;
+}
+
+export default function AppHeader({ isConnected = false, currentSymbol = 'BTCUSDT' }: AppHeaderProps) {
   return (
     <motion.header 
       initial={{ y: -100, opacity: 0 }}
@@ -23,6 +28,21 @@ export default function AppHeader() {
         </motion.div>
         
         <div className="flex items-center space-x-4">
+          {/* Connection Status */}
+          <motion.div 
+            className="flex items-center space-x-2 bg-white bg-opacity-20 rounded-lg px-3 py-1"
+            whileHover={{ scale: 1.02 }}
+          >
+            {isConnected ? (
+              <Wifi className="w-4 h-4 text-green-400" />
+            ) : (
+              <WifiOff className="w-4 h-4 text-red-400" />
+            )}
+            <span className="text-white text-sm">
+              {isConnected ? 'Live' : 'Offline'} • {currentSymbol.replace('USDT', '/USDT')}
+            </span>
+          </motion.div>
+
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Button 
               variant="ghost" 

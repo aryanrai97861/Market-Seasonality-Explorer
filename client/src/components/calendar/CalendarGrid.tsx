@@ -11,6 +11,12 @@ interface CalendarGridProps {
   calendarDays: CalendarDay[];
   onNavigateMonth: (direction: 'prev' | 'next') => void;
   onDateSelect: (date: string) => void;
+  showMetrics: {
+    volatility: boolean;
+    liquidity: boolean;
+    performance: boolean;
+  };
+  selectedDate?: string;
 }
 
 const DAYS_OF_WEEK = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -41,6 +47,8 @@ export default function CalendarGrid({
   calendarDays,
   onNavigateMonth,
   onDateSelect,
+  showMetrics,
+  selectedDate,
 }: CalendarGridProps) {
   return (
     <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
@@ -123,6 +131,8 @@ export default function CalendarGrid({
             day={day}
             onDateSelect={onDateSelect}
             index={index}
+            showMetrics={showMetrics}
+            isSelected={day.date === selectedDate}
           />
         ))}
       </motion.div>

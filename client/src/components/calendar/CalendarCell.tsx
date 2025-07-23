@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ArrowUp, ArrowDown } from 'lucide-react';
+import { ArrowUp, ArrowDown, TrendingUp, Activity, Droplets, Zap, Circle } from 'lucide-react';
 import { CalendarDay } from '@/types/market-data';
 import { TooltipCustom } from '@/components/ui/tooltip-custom';
 import { formatPercentage, formatVolume } from '@/lib/date-utils';
@@ -8,9 +8,15 @@ interface CalendarCellProps {
   day: CalendarDay;
   onDateSelect: (date: string) => void;
   index: number;
+  showMetrics?: {
+    volatility: boolean;
+    liquidity: boolean;
+    performance: boolean;
+  };
+  isSelected?: boolean;
 }
 
-export default function CalendarCell({ day, onDateSelect, index }: CalendarCellProps) {
+export default function CalendarCell({ day, onDateSelect, index, showMetrics = { volatility: true, liquidity: true, performance: true }, isSelected = false }: CalendarCellProps) {
   const getVolatilityClass = () => {
     if (!day.isCurrentMonth) return 'bg-slate-700 bg-opacity-50 text-gray-500';
     
@@ -26,17 +32,66 @@ export default function CalendarCell({ day, onDateSelect, index }: CalendarCellP
     }
   };
 
+  const getVolatilitySymbol = () => {
+    if (!day.isCurrentMonth || !showMetrics?.volatility) return null;
+    switch (day.volatilityLevel) {
+      case 'low': return <Circle className="w-2 h-2 text-green-400 fill-current" />;
+      case 'medium': return <Zap className="w-2 h-2 text-yellow-400" />;
+      case 'high': return <Activity className="w-2 h-2 text-red-400" />;
+      default: return null;
+    }
+  };
+
+  const getLiquiditySymbol = () => {
+    if (!day.isCurrentMonth || !showMetrics?.liquidity || !day.volume) return null;
+    const intensity = day.volume > 1000000000 ? 'high' : day.volume > 100000000 ? 'medium' : 'low';
+    const dots = intensity === 'high' ? 3 : intensity === 'medium' ? 2 : 1;
+    
+    return (
+      <div className="flex space-x-0.5">
+        {Array.from({ length: dots }).map((_, i) => (
+          <div key={i} className="w-1 h-1 bg-blue-400 rounded-full" />
+        ))}
+      </div>
+    );
+  };
+
+  const getPerformanceSymbol = () => {
+    if (!day.isCurrentMonth || !showMetrics?.performance) return null;
+    if (day.performance > 2) return <TrendingUp className="w-2 h-2 text-green-400" />;
+    if (day.performance < -2) return <ArrowDown className="w-2 h-2 text-red-400" />;
+    return <div className="w-2 h-2 bg-gray-400 rounded-full" />;
+  };
+
   const tooltipContent = day.isCurrentMonth ? (
-    <div>
+    <div className="space-y-2">
       <div className="font-medium">{new Date(day.date).toLocaleDateString('en-US', { 
         month: 'short', 
         day: 'numeric', 
         year: 'numeric' 
       })}</div>
-      <div className="text-xs text-gray-300 space-y-1 mt-1">
-        <div>Volatility: {day.volatilityLevel} ({day.marketData?.volatility?.toFixed(2)}%)</div>
-        <div>Performance: {formatPercentage(day.performance)}</div>
-        <div>Volume: {formatVolume(day.volume)}</div>
+      <div className="text-xs text-gray-300 space-y-1">
+        <div className="flex items-center justify-between">
+          <span>Volatility:</span>
+          <span className="flex items-center space-x-1">
+            {getVolatilitySymbol()}
+            <span>{day.volatilityLevel} ({day.marketData?.volatility?.toFixed(2)}%)</span>
+          </span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span>Performance:</span>
+          <span className="flex items-center space-x-1">
+            {getPerformanceSymbol()}
+            <span>{formatPercentage(day.performance)}</span>
+          </span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span>Liquidity:</span>
+          <span className="flex items-center space-x-1">
+            {getLiquiditySymbol()}
+            <span>{formatVolume(day.volume)}</span>
+          </span>
+        </div>
       </div>
     </div>
   ) : null;
@@ -60,36 +115,68 @@ export default function CalendarCell({ day, onDateSelect, index }: CalendarCellP
         className={`
           calendar-cell ${getVolatilityClass()} rounded-lg p-2 h-20 text-sm cursor-pointer relative
           ${day.isToday ? 'ring-2 ring-blue-400 ring-opacity-75' : ''}
-          ${day.isSelected ? 'ring-2 ring-white ring-opacity-50' : ''}
+          ${day.isSelected || isSelected ? 'ring-2 ring-white ring-opacity-50' : ''}
+          focus:outline-none focus:ring-2 focus:ring-blue-500
         `}
         onClick={() => day.isCurrentMonth && onDateSelect(day.date)}
+        tabIndex={day.isCurrentMonth ? 0 : -1}
+        role="button"
+        aria-label={`${day.dayNumber} ${day.isCurrentMonth ? `${day.volatilityLevel} volatility, ${formatPercentage(day.performance)} performance` : ''}`}
+        onKeyDown={(e) => {
+          if ((e.key === 'Enter' || e.key === ' ') && day.isCurrentMonth) {
+            e.preventDefault();
+            onDateSelect(day.date);
+          }
+        }}
       >
-        <span className="relative z-10">{day.dayNumber}</span>
+        <div className="flex justify-between items-start h-full">
+          <span className="relative z-10 font-medium">{day.dayNumber}</span>
+          
+          {/* Today Indicator */}
+          {day.isToday && (
+            <div className="w-2 h-2 bg-white rounded-full z-10 animate-pulse" />
+          )}
+        </div>
         
         {day.isCurrentMonth && (
           <>
-            {/* Performance Arrow */}
-            <div className="absolute bottom-1 right-1 z-10">
-              {day.performance > 0 ? (
-                <ArrowUp className="w-3 h-3" />
-              ) : day.performance < 0 ? (
-                <ArrowDown className="w-3 h-3" />
-              ) : null}
+            {/* Metric Symbols Row */}
+            <div className="absolute bottom-1 left-1 right-1 flex justify-between items-center z-10">
+              <div className="flex items-center space-x-1">
+                {/* Volatility Symbol */}
+                {showMetrics?.volatility && (
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: index * 0.02 + 0.1 }}
+                  >
+                    {getVolatilitySymbol()}
+                  </motion.div>
+                )}
+                
+                {/* Liquidity Symbol */}
+                {showMetrics?.liquidity && (
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: index * 0.02 + 0.15 }}
+                  >
+                    {getLiquiditySymbol()}
+                  </motion.div>
+                )}
+              </div>
+              
+              {/* Performance Symbol */}
+              {showMetrics?.performance && (
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: index * 0.02 + 0.2 }}
+                >
+                  {getPerformanceSymbol()}
+                </motion.div>
+              )}
             </div>
-            
-            {/* Volume Indicator */}
-            <div 
-              className="absolute bottom-1 left-1 bg-white bg-opacity-50 rounded z-10"
-              style={{ 
-                width: `${Math.min(20, Math.max(4, (day.volume / 1000000000) * 20))}px`,
-                height: '2px'
-              }}
-            />
-
-            {/* Today Indicator */}
-            {day.isToday && (
-              <div className="absolute top-1 right-1 w-2 h-2 bg-white rounded-full z-10" />
-            )}
           </>
         )}
       </motion.div>

@@ -4,12 +4,14 @@ import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useCalendarState } from '@/hooks/use-calendar-state';
 import { useMarketData, useDetailPanelData, useQuickStats } from '@/hooks/use-market-data';
+import { useBinanceWebSocket } from '@/hooks/use-binance-websocket';
 import { binanceAPI } from '@/lib/binance-api';
 import AppHeader from '@/components/layout/AppHeader';
 import ControlPanel from '@/components/calendar/ControlPanel';
 import CalendarGrid from '@/components/calendar/CalendarGrid';
 import DetailPanel from '@/components/calendar/DetailPanel';
 import QuickStats from '@/components/calendar/QuickStats';
+import SymbolLegend from '@/components/calendar/SymbolLegend';
 
 const pageVariants = {
   initial: { opacity: 0, y: 20 },
@@ -44,6 +46,9 @@ export default function MarketCalendar() {
   const detailPanelData = useDetailPanelData(selectedSymbol, selectedDate);
   const quickStatsData = useQuickStats(selectedSymbol);
   const { toast } = useToast();
+  
+  // WebSocket connection for real-time data
+  const { isConnected } = useBinanceWebSocket(selectedSymbol, true);
 
   // Update calendar days with market data
   useEffect(() => {
@@ -73,37 +78,100 @@ export default function MarketCalendar() {
     }
   }, [marketDataError, toast]);
 
-  // Keyboard navigation
+  // Enhanced keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement) {
         return;
       }
 
+      // Get current month days only
+      const currentMonthDays = calendarDays.filter(day => day.isCurrentMonth);
+      const selectedIndex = selectedDate ? currentMonthDays.findIndex(day => day.date === selectedDate) : -1;
+
       switch (e.key) {
         case 'ArrowLeft':
           e.preventDefault();
-          navigateMonth('prev');
+          if (e.ctrlKey || e.metaKey) {
+            // Ctrl/Cmd + Left: Previous month
+            navigateMonth('prev');
+          } else if (selectedIndex > 0) {
+            // Navigate to previous day
+            selectDate(currentMonthDays[selectedIndex - 1].date);
+          }
           break;
+          
         case 'ArrowRight':
           e.preventDefault();
-          navigateMonth('next');
+          if (e.ctrlKey || e.metaKey) {
+            // Ctrl/Cmd + Right: Next month
+            navigateMonth('next');
+          } else if (selectedIndex >= 0 && selectedIndex < currentMonthDays.length - 1) {
+            // Navigate to next day
+            selectDate(currentMonthDays[selectedIndex + 1].date);
+          }
           break;
+          
+        case 'ArrowUp':
+          e.preventDefault();
+          if (selectedIndex >= 7) {
+            // Navigate to same day previous week
+            selectDate(currentMonthDays[selectedIndex - 7].date);
+          }
+          break;
+          
+        case 'ArrowDown':
+          e.preventDefault();
+          if (selectedIndex >= 0 && selectedIndex + 7 < currentMonthDays.length) {
+            // Navigate to same day next week
+            selectDate(currentMonthDays[selectedIndex + 7].date);
+          }
+          break;
+          
+        case 'Home':
+          e.preventDefault();
+          // Navigate to first day of month
+          if (currentMonthDays.length > 0) {
+            selectDate(currentMonthDays[0].date);
+          }
+          break;
+          
+        case 'End':
+          e.preventDefault();
+          // Navigate to last day of month
+          if (currentMonthDays.length > 0) {
+            selectDate(currentMonthDays[currentMonthDays.length - 1].date);
+          }
+          break;
+          
         case 'Escape':
           e.preventDefault();
           selectDate('');
+          break;
+          
+        case ' ':
+        case 'Enter':
+          e.preventDefault();
+          // Select today if no date selected
+          if (!selectedDate) {
+            const today = new Date().toISOString().split('T')[0];
+            const todayInMonth = currentMonthDays.find(day => day.date === today);
+            if (todayInMonth) {
+              selectDate(today);
+            }
+          }
           break;
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [navigateMonth, selectDate]);
+  }, [navigateMonth, selectDate, selectedDate, calendarDays]);
 
   if (isMarketDataLoading) {
     return (
       <div className="min-h-screen bg-gradient-dark">
-        <AppHeader />
+        <AppHeader isConnected={isConnected} currentSymbol={selectedSymbol} />
         <div className="container mx-auto p-6">
           <div className="flex items-center justify-center min-h-96">
             <div className="text-center">
@@ -126,7 +194,7 @@ export default function MarketCalendar() {
       transition={pageTransition}
       className="min-h-screen bg-gradient-dark"
     >
-      <AppHeader />
+      <AppHeader isConnected={isConnected} currentSymbol={selectedSymbol} />
       
       <div className="container mx-auto p-6 space-y-6">
         <ControlPanel
@@ -146,6 +214,8 @@ export default function MarketCalendar() {
               calendarDays={calendarDays}
               onNavigateMonth={navigateMonth}
               onDateSelect={selectDate}
+              showMetrics={showMetrics}
+              selectedDate={selectedDate || undefined}
             />
           </div>
           
@@ -155,6 +225,8 @@ export default function MarketCalendar() {
         </div>
 
         <QuickStats data={quickStatsData} isLoading={isMarketDataLoading} />
+        
+        <SymbolLegend />
       </div>
     </motion.div>
   );

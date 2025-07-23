@@ -16,7 +16,7 @@ interface ControlPanelProps {
   };
   onSymbolChange: (symbol: CryptoPair) => void;
   onViewPeriodChange: (period: ViewPeriod) => void;
-  onMetricToggle: (metric: keyof typeof showMetrics) => void;
+  onMetricToggle: (metric: 'volatility' | 'liquidity' | 'performance') => void;
 }
 
 const containerVariants = {
@@ -98,7 +98,7 @@ export default function ControlPanel({
               <Checkbox
                 id={key}
                 checked={value}
-                onCheckedChange={() => onMetricToggle(key as keyof typeof showMetrics)}
+                onCheckedChange={() => onMetricToggle(key as 'volatility' | 'liquidity' | 'performance')}
                 className="data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
               />
               <Label

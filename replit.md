@@ -83,3 +83,15 @@ The application is configured for deployment with the following considerations:
    - Development assets served through Vite middleware
 
 The application prioritizes user experience with smooth animations, responsive design, and real-time data updates while maintaining a clean, accessible interface for exploring market seasonality patterns.
+
+## Recent Changes
+
+### July 23, 2025
+- Added real-time WebSocket connection status indicator in the header with live/offline status
+- Created comprehensive SymbolLegend component explaining all visual indicators:
+  - Volatility indicators (low/medium/high with color coding)
+  - Performance indicators (positive/negative/neutral trends)  
+  - Liquidity indicators (volume levels with dot patterns)
+- Enhanced header with connection status showing current trading pair and connectivity
+- Improved keyboard navigation hints and user guidance
+- Implemented Framer Motion animations throughout the legend for smooth user interactions
