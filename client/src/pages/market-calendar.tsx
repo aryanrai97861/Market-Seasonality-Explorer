@@ -8,13 +8,11 @@ import { useBinanceWebSocket } from '@/hooks/use-binance-websocket';
 import { binanceAPI } from '@/lib/binance-api';
 import AppHeader from '@/components/layout/AppHeader';
 import ControlPanel from '@/components/calendar/ControlPanel';
-import CalendarGrid from '@/components/calendar/CalendarGrid';
 import EnhancedCalendar from '@/components/calendar/EnhancedCalendar';
 import DetailPanel from '@/components/calendar/DetailPanel';
 import QuickStats from '@/components/calendar/QuickStats';
 import SymbolLegend from '@/components/calendar/SymbolLegend';
 import { CalendarViewType } from '@/types/calendar-views';
-import AlertSystem from '@/components/calendar/AlertSystem';
 import ComparisonTool from '@/components/calendar/ComparisonTool';
 
 const pageVariants = {
@@ -31,11 +29,9 @@ const pageTransition = {
 
 export default function MarketCalendar() {
   const {
-    currentDate,
     selectedDate,
     selectedDateRange,
     isRangeSelection,
-    viewPeriod,
     selectedSymbol,
     showMetrics,
     calendarDays,
@@ -43,7 +39,6 @@ export default function MarketCalendar() {
     month,
     navigateMonth,
     selectDate,
-    setViewPeriod,
     setSelectedSymbol,
     toggleMetric,
     toggleRangeSelection,
@@ -252,7 +247,7 @@ export default function MarketCalendar() {
 
         {/* Range summary */}
         {rangeSummary && (
-          <div className="mb-4 p-4 bg-slate-800 rounded-xl border border-slate-700 flex flex-col md:flex-row gap-4">
+          <div className="mb-4 p-4 bg-slate-800 rounded-xl border border-slate-700 flex flex-col md:flex-row gap-4 text-white">
             <div>Range: {selectedDateRange.start} to {selectedDateRange.end} ({rangeSummary.count} days)</div>
             <div>Avg Volatility: {rangeSummary.avgVolatility.toFixed(2)}%</div>
             <div>Total Volume: {rangeSummary.totalVolume.toLocaleString()}</div>
