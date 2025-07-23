@@ -1,13 +1,9 @@
 import { motion } from 'framer-motion';
-import { Settings, Calendar, BarChart3, Download, MousePointer } from 'lucide-react';
-import { ViewPeriod, CryptoPair } from '@/types/market-data';
-import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { exportToCSV, exportToPDF, exportToImage } from '@/lib/export-utils';
-import ColorSchemeSelector from './ColorSchemeSelector';
+import { ViewPeriod, CryptoPair } from '@/types/market-data';
 
 interface ControlPanelProps {
   selectedSymbol: CryptoPair;
@@ -68,28 +64,6 @@ export default function ControlPanel({
             <SelectItem value="SOLUSDT">SOL/USDT</SelectItem>
           </SelectContent>
         </Select>
-      </motion.div>
-
-      {/* Time Period Selector */}
-      <motion.div variants={itemVariants} className="bg-slate-800 rounded-xl p-4 border border-slate-700">
-        <Label className="block text-sm font-medium text-gray-300 mb-2">View Period</Label>
-        <div className="flex space-x-1">
-          {(['daily', 'weekly', 'monthly'] as ViewPeriod[]).map((period) => (
-            <Button
-              key={period}
-              variant={viewPeriod === period ? "default" : "secondary"}
-              size="sm"
-              className={`flex-1 text-sm font-medium transition-all duration-300 ${
-                viewPeriod === period 
-                  ? 'gradient-primary text-white' 
-                  : 'bg-slate-700 hover:bg-slate-600 text-gray-300'
-              }`}
-              onClick={() => onViewPeriodChange(period)}
-            >
-              {period.charAt(0).toUpperCase() + period.slice(1)}
-            </Button>
-          ))}
-        </div>
       </motion.div>
 
       {/* Metric Toggle */}
