@@ -24,6 +24,7 @@ interface EnhancedCalendarProps {
   selectedDate?: string;
   currentView: CalendarViewType;
   onViewChange: (view: CalendarViewType) => void;
+  selectedDateRange?: { start: string | null; end: string | null };
 }
 
 const headerVariants = {
@@ -53,7 +54,8 @@ export default function EnhancedCalendar({
   showMetrics,
   selectedDate,
   currentView,
-  onViewChange
+  onViewChange,
+  selectedDateRange
 }: EnhancedCalendarProps) {
   const calendarRef = useRef<HTMLDivElement>(null);
 
@@ -132,6 +134,7 @@ export default function EnhancedCalendar({
             onDateSelect={onDateSelect}
             showMetrics={showMetrics}
             selectedDate={selectedDate}
+            selectedDateRange={selectedDateRange}
           />
         );
       

@@ -17,6 +17,7 @@ interface CalendarGridProps {
     performance: boolean;
   };
   selectedDate?: string;
+  selectedDateRange?: { start: string | null; end: string | null };
 }
 
 const DAYS_OF_WEEK = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -49,6 +50,7 @@ export default function CalendarGrid({
   onDateSelect,
   showMetrics,
   selectedDate,
+  selectedDateRange,
 }: CalendarGridProps) {
   return (
     <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
@@ -133,6 +135,7 @@ export default function CalendarGrid({
             index={index}
             showMetrics={showMetrics}
             isSelected={day.date === selectedDate}
+            selectedDateRange={selectedDateRange}
           />
         ))}
       </motion.div>

@@ -33,6 +33,8 @@ export default function MarketCalendar() {
   const {
     currentDate,
     selectedDate,
+    selectedDateRange,
+    isRangeSelection,
     viewPeriod,
     selectedSymbol,
     showMetrics,
@@ -44,6 +46,7 @@ export default function MarketCalendar() {
     setViewPeriod,
     setSelectedSymbol,
     toggleMetric,
+    toggleRangeSelection,
   } = useCalendarState();
 
   const [currentView, setCurrentView] = useState<CalendarViewType>('daily');
@@ -174,6 +177,39 @@ export default function MarketCalendar() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [navigateMonth, selectDate, selectedDate, calendarDays]);
 
+  // Add handler for date range change
+  const handleDateRangeChange = (range: { start: string | null; end: string | null }) => {
+    // Use selectDate for single, or update selectedDateRange for range
+    if (!isRangeSelection) {
+      selectDate(range.start || '');
+    } else {
+      // This will update selectedDateRange in the hook
+      // (selectDate already handles range logic, but you can call it here for clarity)
+      if (range.start && range.end) {
+        selectDate(range.end); // selectDate will update the range
+      } else if (range.start) {
+        selectDate(range.start);
+      }
+    }
+  };
+
+  // Range summary calculation
+  function getRangeSummary() {
+    if (!selectedDateRange.start || !selectedDateRange.end) return null;
+    const start = new Date(selectedDateRange.start);
+    const end = new Date(selectedDateRange.end);
+    const daysInRange = calendarDays.filter(day => {
+      const date = new Date(day.date);
+      return date >= start && date <= end && day.isCurrentMonth;
+    });
+    if (daysInRange.length === 0) return null;
+    const avgVolatility = daysInRange.reduce((sum, d) => sum + (d.marketData?.volatility || 0), 0) / daysInRange.length;
+    const totalVolume = daysInRange.reduce((sum, d) => sum + (d.marketData?.liquidity || 0), 0);
+    const avgPerformance = daysInRange.reduce((sum, d) => sum + (d.marketData?.priceChangePercent || 0), 0) / daysInRange.length;
+    return { avgVolatility, totalVolume, avgPerformance, count: daysInRange.length };
+  }
+  const rangeSummary = getRangeSummary();
+
   if (isMarketDataLoading) {
     return (
       <div className="min-h-screen bg-gradient-dark">
@@ -205,12 +241,24 @@ export default function MarketCalendar() {
       <div className="container mx-auto p-6 space-y-6">
         <ControlPanel
           selectedSymbol={selectedSymbol}
-          viewPeriod={viewPeriod}
           showMetrics={showMetrics}
           onSymbolChange={setSelectedSymbol}
-          onViewPeriodChange={setViewPeriod}
           onMetricToggle={toggleMetric}
+          selectedDateRange={selectedDateRange}
+          onDateRangeChange={handleDateRangeChange}
+          isRangeSelection={isRangeSelection}
+          onToggleRangeSelection={toggleRangeSelection}
         />
+
+        {/* Range summary */}
+        {rangeSummary && (
+          <div className="mb-4 p-4 bg-slate-800 rounded-xl border border-slate-700 flex flex-col md:flex-row gap-4">
+            <div>Range: {selectedDateRange.start} to {selectedDateRange.end} ({rangeSummary.count} days)</div>
+            <div>Avg Volatility: {rangeSummary.avgVolatility.toFixed(2)}%</div>
+            <div>Total Volume: {rangeSummary.totalVolume.toLocaleString()}</div>
+            <div>Avg Performance: {rangeSummary.avgPerformance.toFixed(2)}%</div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
           <div className="xl:col-span-3" id="calendar-container">
@@ -224,6 +272,7 @@ export default function MarketCalendar() {
               selectedDate={selectedDate || undefined}
               currentView={currentView}
               onViewChange={setCurrentView}
+              selectedDateRange={selectedDateRange}
             />
 
             <div className="mt-6">

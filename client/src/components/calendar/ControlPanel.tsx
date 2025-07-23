@@ -7,15 +7,17 @@ import { ViewPeriod, CryptoPair } from '@/types/market-data';
 
 interface ControlPanelProps {
   selectedSymbol: CryptoPair;
-  viewPeriod: ViewPeriod;
   showMetrics: {
     volatility: boolean;
     liquidity: boolean;
     performance: boolean;
   };
   onSymbolChange: (symbol: CryptoPair) => void;
-  onViewPeriodChange: (period: ViewPeriod) => void;
   onMetricToggle: (metric: 'volatility' | 'liquidity' | 'performance') => void;
+  selectedDateRange: { start: string | null; end: string | null };
+  onDateRangeChange: (range: { start: string | null; end: string | null }) => void;
+  isRangeSelection: boolean;
+  onToggleRangeSelection: () => void;
 }
 
 const containerVariants = {
@@ -37,11 +39,13 @@ const itemVariants = {
 
 export default function ControlPanel({
   selectedSymbol,
-  viewPeriod,
   showMetrics,
   onSymbolChange,
-  onViewPeriodChange,
   onMetricToggle,
+  selectedDateRange,
+  onDateRangeChange,
+  isRangeSelection,
+  onToggleRangeSelection,
 }: ControlPanelProps) {
   return (
     <motion.div
@@ -89,14 +93,39 @@ export default function ControlPanel({
         </div>
       </motion.div>
 
-      {/* Date Range */}
+      {/* Date Range Selection */}
       <motion.div variants={itemVariants} className="bg-slate-800 rounded-xl p-4 border border-slate-700">
-        <Label className="block text-sm font-medium text-gray-300 mb-2">Date Range</Label>
-        <Input
-          type="month"
-          defaultValue="2024-01"
-          className="w-full bg-slate-700 border-slate-600 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
-        />
+        <div className="flex items-center justify-between mb-2">
+          <Label className="block text-sm font-medium text-gray-300">Date Range</Label>
+          <button
+            type="button"
+            className={`text-xs px-2 py-1 rounded ${isRangeSelection ? 'bg-blue-600 text-white' : 'bg-slate-700 text-gray-300'}`}
+            onClick={onToggleRangeSelection}
+          >
+            {isRangeSelection ? 'Range' : 'Single'}
+          </button>
+        </div>
+        <div className="flex space-x-2">
+          <Input
+            type="date"
+            value={selectedDateRange.start || ''}
+            onChange={e => onDateRangeChange({ start: e.target.value, end: selectedDateRange.end })}
+            className="w-full bg-slate-700 border-slate-600 text-white"
+          />
+          {isRangeSelection && (
+            <Input
+              type="date"
+              value={selectedDateRange.end || ''}
+              onChange={e => onDateRangeChange({ start: selectedDateRange.start, end: e.target.value })}
+              className="w-full bg-slate-700 border-slate-600 text-white"
+            />
+          )}
+        </div>
+        <div className="text-xs text-gray-400 mt-2">
+          {isRangeSelection
+            ? `From: ${selectedDateRange.start || '---'} To: ${selectedDateRange.end || '---'}`
+            : `Selected: ${selectedDateRange.start || '---'}`}
+        </div>
       </motion.div>
     </motion.div>
   );

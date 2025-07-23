@@ -14,9 +14,10 @@ interface CalendarCellProps {
     performance: boolean;
   };
   isSelected?: boolean;
+  selectedDateRange?: { start: string | null; end: string | null };
 }
 
-export default function CalendarCell({ day, onDateSelect, index, showMetrics = { volatility: true, liquidity: true, performance: true }, isSelected = false }: CalendarCellProps) {
+export default function CalendarCell({ day, onDateSelect, index, showMetrics = { volatility: true, liquidity: true, performance: true }, isSelected = false, selectedDateRange }: CalendarCellProps) {
   const getVolatilityClass = () => {
     if (!day.isCurrentMonth) return 'bg-slate-700 bg-opacity-50 text-gray-500';
     
@@ -96,6 +97,14 @@ export default function CalendarCell({ day, onDateSelect, index, showMetrics = {
     </div>
   ) : null;
 
+  const isInRange = () => {
+    if (!selectedDateRange?.start || !selectedDateRange?.end) return false;
+    const date = new Date(day.date);
+    const start = new Date(selectedDateRange.start);
+    const end = new Date(selectedDateRange.end);
+    return date >= start && date <= end;
+  };
+
   return (
     <TooltipCustom content={tooltipContent}>
       <motion.div
@@ -116,6 +125,7 @@ export default function CalendarCell({ day, onDateSelect, index, showMetrics = {
           calendar-cell ${getVolatilityClass()} rounded-lg p-2 h-20 text-sm cursor-pointer relative
           ${day.isToday ? 'ring-2 ring-blue-400 ring-opacity-75' : ''}
           ${day.isSelected || isSelected ? 'ring-2 ring-white ring-opacity-50' : ''}
+          ${isInRange() ? 'ring-2 ring-cyan-400 ring-opacity-60' : ''}
           focus:outline-none focus:ring-2 focus:ring-blue-500
         `}
         onClick={() => day.isCurrentMonth && onDateSelect(day.date)}
