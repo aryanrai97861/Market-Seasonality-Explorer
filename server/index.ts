@@ -56,16 +56,30 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // ALWAYS serve the app on the port specified in the environment variable PORT
-  // Other ports are firewalled. Default to 5000 if not specified.
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
+  // Serve the app on localhost for local development
   const port = parseInt(process.env.PORT || '5000', 10);
+  const host = process.env.HOST || 'localhost';
+  
   server.listen({
     port,
-    host: "0.0.0.0",
+    host,
     reusePort: true,
   }, () => {
-    log(`serving on port ${port}`);
+    log(`serving on ${host}:${port}`);
+    console.log(`\n🚀 Market Seasonality Explorer`);
+    console.log(`📊 Dashboard: http://${host}:${port}`);
+    console.log(`🔌 API: http://${host}:${port}/api`);
+    console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`💻 Host: ${host}`);
+    console.log(`\n✨ Features available:`);
+    console.log(`   📈 Real-time cryptocurrency data`);
+    console.log(`   📅 Interactive calendar views (Daily/Weekly/Monthly)`);
+    console.log(`   🎨 Dark theme with CodeCraft gradients`);
+    console.log(`   ⚡ Live market indicators and WebSocket connections`);
+    console.log(`\n📖 Documentation: README.md | localhost-setup.md`);
+    if (host === 'localhost') {
+      console.log(`\n🏠 Running in localhost mode - perfect for local development!`);
+    }
+    console.log(`\nPress Ctrl+C to stop the server\n`);
   });
 })();
