@@ -25,6 +25,8 @@ A sophisticated React application for visualizing cryptocurrency market data thr
    git clone <repository-url>
    cd market-seasonality-explorer
    npm install
+   npm install --save-dev cross-env
+   update your package.json with - "dev": "cross-env NODE_ENV=development tsx server/index.ts",
    ```
 
 2. **Environment Configuration**
@@ -39,27 +41,6 @@ A sophisticated React application for visualizing cryptocurrency market data thr
    ```
    The application will be available at `http://localhost:5000`
 
-### Separate Frontend/Backend Development
-
-For separate frontend and backend development:
-
-1. **Start Backend Server (Terminal 1)**
-   ```bash
-   # Backend runs on localhost:3001
-   HOST=localhost PORT=3001 npm run dev
-   ```
-
-2. **Start Frontend Dev Server (Terminal 2)**
-   ```bash
-   # Frontend runs on localhost:3000
-   cd client
-   npm install
-   npm run dev
-   ```
-
-3. **Access the Application**
-   - Frontend: `http://localhost:3000`
-   - Backend API: `http://localhost:3001/api`
 
 ### Production Build
 
