@@ -119,7 +119,7 @@ export default function MarketCalendar() {
   if (isMarketDataLoading) {
     return (
       <div className="min-h-screen bg-gradient-dark">
-        <AppHeader isConnected={isConnected} currentSymbol={selectedSymbol} />
+        <AppHeader isConnected={isConnected} currentSymbol={selectedSymbol} calendarDays={calendarDays} />
         <div className="container mx-auto p-6">
           <div className="flex items-center justify-center min-h-96">
             <div className="text-center">
@@ -142,7 +142,7 @@ export default function MarketCalendar() {
       transition={pageTransition}
       className="min-h-screen bg-gradient-dark"
     >
-      <AppHeader isConnected={isConnected} currentSymbol={selectedSymbol} />
+      <AppHeader isConnected={isConnected} currentSymbol={selectedSymbol} calendarDays={calendarDays} />
 
       <div className="container mx-auto p-6 space-y-6">
         <ControlPanel

@@ -1,13 +1,19 @@
 import { motion } from 'framer-motion';
 import { ChartLine, Download, User, Wifi, WifiOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import ExportMenu from './ExportMenu';
+import { CalendarDay } from '@/types/market-data';
+import { useState, useRef } from 'react';
 
 interface AppHeaderProps {
   isConnected?: boolean;
   currentSymbol?: string;
+  calendarDays: CalendarDay[];
 }
 
-export default function AppHeader({ isConnected = false, currentSymbol = 'BTCUSDT' }: AppHeaderProps) {
+export default function AppHeader({ isConnected = false, currentSymbol = 'BTCUSDT', calendarDays }: AppHeaderProps) {
+  const [showExport, setShowExport] = useState(false);
+
   return (
     <motion.header 
       initial={{ y: -100, opacity: 0 }}
@@ -51,35 +57,52 @@ export default function AppHeader({ isConnected = false, currentSymbol = 'BTCUSD
             </span>
           </motion.div>
 
-          {/* Export Button - Hidden on mobile */}
-          <motion.div 
-            whileHover={{ scale: 1.05 }} 
-            whileTap={{ scale: 0.95 }}
-            className="hidden sm:block"
-          >
-            <Button 
-              variant="ghost" 
-              className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white transition-all duration-300 flex items-center space-x-2 px-3 py-1 sm:px-4 sm:py-2"
+          {/* Export Dropdown */}
+          <div className="relative">
+            <motion.div 
+              whileHover={{ scale: 1.05 }} 
+              whileTap={{ scale: 0.95 }}
+              className="hidden sm:block"
             >
-              <Download className="w-3 h-3 sm:w-4 sm:h-4" />
-              <span className="hidden md:inline">Export</span>
-            </Button>
-          </motion.div>
-
-          {/* Mobile Export Button */}
-          <motion.div 
-            whileHover={{ scale: 1.05 }} 
-            whileTap={{ scale: 0.95 }}
-            className="block sm:hidden"
-          >
-            <Button 
-              variant="ghost" 
-              size="sm"
-              className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white transition-all duration-300 p-2"
+              <Button
+                variant="ghost"
+                className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white transition-all duration-300 flex items-center space-x-2 px-3 py-1 sm:px-4 sm:py-2"
+                onClick={() => setShowExport(v => !v)}
+                aria-haspopup="menu"
+                aria-expanded={showExport}
+              >
+                <Download className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden md:inline">Export</span>
+              </Button>
+              {showExport && (
+                <div className="absolute right-0 mt-2 z-50" onMouseLeave={() => setShowExport(false)}>
+                  <ExportMenu calendarDays={calendarDays} />
+                </div>
+              )}
+            </motion.div>
+            {/* Mobile Export Button */}
+            <motion.div 
+              whileHover={{ scale: 1.05 }} 
+              whileTap={{ scale: 0.95 }}
+              className="block sm:hidden"
             >
-              <Download className="w-4 h-4" />
-            </Button>
-          </motion.div>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white transition-all duration-300 p-2"
+                onClick={() => setShowExport(v => !v)}
+                aria-haspopup="menu"
+                aria-expanded={showExport}
+              >
+                <Download className="w-4 h-4" />
+              </Button>
+              {showExport && (
+                <div className="absolute right-0 mt-2 z-50" onMouseLeave={() => setShowExport(false)}>
+                  <ExportMenu calendarDays={calendarDays} />
+                </div>
+              )}
+            </motion.div>
+          </div>
           
           <motion.div 
             whileHover={{ scale: 1.1, rotate: 5 }}
