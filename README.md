@@ -4,42 +4,69 @@ A sophisticated React application for visualizing cryptocurrency market data thr
 
 ## Features
 
-- 📊 **Interactive Calendar**: Daily, weekly, and monthly views with market indicators
-- 🔄 **Real-time Data**: Live WebSocket connection to Binance API
-- 📱 **Responsive Design**: Works on desktop, tablet, and mobile devices
-- 🎨 **Dark Theme**: CodeCraft-inspired gradient styling with smooth animations
-- ⚡ **Performance**: Optimized with React Query and efficient data caching
-- 🎯 **Accessibility**: Keyboard navigation and screen reader support
+### Core Features (Implemented)
+- 📊 **Interactive Calendar**: Daily, weekly, and monthly views with smooth transitions and market indicators
+- 🔄 **Real-time Data**: Live WebSocket connection to Binance API for orderbook and price data
+- 🟢🟡🔴 **Volatility Heatmap**: Calendar cells color-coded by volatility (Low/Medium/High)
+- 💧 **Liquidity Indicators**: Volume and liquidity visualized using dots/bars in calendar cells
+- 📈📉 **Performance Metrics**: Price change and returns visualized with up/down/neutral indicators
+- 🗓️ **Multi-Timeframe Support**: Switch between daily, weekly, and monthly aggregation
+- 🖱️ **Interactive Features**: Hover tooltips, click for detail, date range selection, filters, and zoom
+- 🧑‍💻 **Keyboard Navigation**: Full arrow/enter/escape navigation support
+- 🧩 **Data Dashboard Panel**: Detailed info panel for selected dates/periods (OHLC, volume, volatility, benchmarks, technicals)
+- 📱 **Responsive Design**: Fully touch-friendly and optimized for mobile/tablet/desktop
+- ♿ **Accessibility**: Keyboard navigation and screen reader support
+
+### Bonus/Advanced Features
+- 📤 **Export Functionality**: Export calendar data as CSV (PDF/Image: see below)
+- 🎨 **Custom Color Schemes**: Default, high contrast, and colorblind-friendly themes
+- ⚖️ **Data Comparison**: Side-by-side comparison of different symbols or time periods
+- 🚨 **Alert System**: Set alerts for volatility/performance thresholds
+- 🔍 **Historical Patterns**: Highlight recurring patterns and anomalies (statistical detection)
+- 🔄 **Integration Ready**: Modular for future API/data integration
+- 🌀 **Animation Effects**: Smooth transitions and UI feedback
+
+#### Export Notes
+- CSV export is fully supported and downloadable.
+- PDF/Image export options are present but may not trigger a download in all browsers. If you need these, check for DOM element `calendar-export-root` or use CSV for best compatibility.
 
 ## Local Development Setup
 
 ### Prerequisites
 
-- Node.js 18+ and npm
-- Modern web browser
+- **Node.js 18+** and npm (required for both client and server)
+- **Modern web browser** (Chrome 90+, Firefox 88+, Safari 14+, Edge 90+)
+- (Optional) [Git](https://git-scm.com/) for cloning
 
 ### Quick Start
 
-1. **Clone and Install Dependencies**
+1. **Clone the Repository**
    ```bash
    git clone <repository-url>
-   cd market-seasonality-explorer
+   cd MarketSeasonalityExplorer
+   ```
+
+2. **Install Dependencies**
+   ```bash
    npm install
    npm install --save-dev cross-env
-   update your package.json with - "dev": "cross-env NODE_ENV=development tsx server/index.ts",
    ```
+   > Ensure your `package.json` includes:
+   > ```json
+   > "dev": "cross-env NODE_ENV=development tsx server/index.ts",
+   > ```
 
-2. **Environment Configuration**
+3. **Configure Environment Variables**
    ```bash
    cp .env.example .env.local
-   # Edit .env.local with your configuration
+   # Edit .env.local as needed (see below for variables)
    ```
 
-3. **Start Development Server**
+4. **Start the Development Server**
    ```bash
    npm run dev
    ```
-   The application will be available at `http://localhost:5000`
+   The app will be available at [http://localhost:5000](http://localhost:5000) (or as configured).
 
 
 ### Production Build
@@ -64,10 +91,10 @@ VITE_API_URL=http://localhost:3001/api
 
 ### Available Scripts
 
-- `npm run dev` - Start full-stack development server
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run check` - TypeScript type checking
+- `npm run dev` — Start full-stack development server (client + API)
+- `npm run build` — Build for production
+- `npm run start` — Start production server
+- `npm run check` — TypeScript type checking
 
 ## Architecture
 
@@ -101,52 +128,50 @@ VITE_API_URL=http://localhost:3001/api
 
 ## API Integration
 
-### Binance WebSocket
-
-The application connects to Binance's public WebSocket API for real-time market data:
-
-- **Ticker Data**: 24hr ticker statistics
-- **Kline Data**: Historical price data
-- **Supported Symbols**: BTC/USDT, ETH/USDT, ADA/USDT, SOL/USDT
+### Binance WebSocket & REST API
+- **Orderbook Data**: Real-time via Binance WebSocket
+- **Ticker/Kline Data**: Historical and real-time price/volume/volatility
+- **Supported Symbols**: BTC/USDT, ETH/USDT, ADA/USDT, SOL/USDT (expandable)
 
 ### Data Processing
-
-Market data is processed to calculate:
 - **Volatility Levels**: Low (<2%), Medium (2-5%), High (>5%)
-- **Performance Indicators**: Price change percentages
-- **Liquidity Metrics**: Trading volume analysis
+- **Performance Indicators**: Price change % and direction
+- **Liquidity Metrics**: Volume and orderbook depth
+- **Anomaly Detection**: Statistical outlier and recurrence detection
 
-## Calendar Views
+## Calendar & Dashboard Views
 
 ### Daily View
-Traditional month calendar with detailed market indicators on each date.
+- Traditional calendar grid with detailed market indicators for each day
+- Intraday volatility, volume, and performance shown per cell
 
 ### Weekly View
-Week-by-week organization for pattern analysis and trend identification.
+- Aggregated weekly summaries: average volatility, total volume, performance
 
 ### Monthly View
-Aggregated statistics for each month with overview cards showing:
-- Average volatility levels
-- Performance summaries
-- Total trading volumes
-- Trading day counts
+- Monthly overview: trends, liquidity patterns, performance highlights
 
-## Visual Indicators
+### Dashboard Panel
+- Detailed stats (OHLC, volume, volatility, technicals, benchmarks) for selected date/range
+- Quick stats and anomaly/alert highlights
 
-### Volatility Symbols
-- 🟢 Circle: Low volatility (<2%)
-- 🟡 Lightning: Medium volatility (2-5%)
-- 🔴 Activity: High volatility (>5%)
+## Visual Indicators & Themes
 
-### Performance Symbols
-- 📈 Trending Up: Strong positive (>2%)
-- 📉 Arrow Down: Strong negative (<-2%)
+### Volatility
+- 🟢 Circle: Low (<2%)
+- 🟡 Lightning: Medium (2-5%)
+- 🔴 Activity: High (>5%)
+
+### Performance
+- 📈 Up: Strong positive (>2%)
+- 📉 Down: Strong negative (<-2%)
 - ⚫ Dot: Neutral (-2% to 2%)
 
-### Liquidity Indicators
-- • Single dot: Low volume (<$100M)
-- •• Double dots: Medium volume ($100M-$1B)
-- ••• Triple dots: High volume (>$1B)
+### Liquidity
+- •, ••, •••: Low/Medium/High volume
+
+### Color Schemes
+- Default, High Contrast, Colorblind Friendly (toggle in UI)
 
 ## Browser Support
 
@@ -162,6 +187,12 @@ Aggregated statistics for each month with overview cards showing:
 3. Make your changes
 4. Add tests if applicable
 5. Submit a pull request
+
+---
+
+**For more details, see in-app documentation or code comments.**
+
+If you encounter issues with export, API, or feature requests, please open an issue or PR.
 
 ## License
 
