@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { ViewPeriod, CryptoPair } from '@/types/market-data';
 import { getCurrentMonthDays } from '@/lib/date-utils';
+import { detectAnomaliesInCalendarDays } from '@/lib/anomaly-utils';
 
 export function useCalendarState() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -23,7 +24,8 @@ export function useCalendarState() {
   const month = currentDate.getMonth();
 
   const calendarDays = useMemo(() => {
-    return getCurrentMonthDays(year, month);
+    const days = getCurrentMonthDays(year, month);
+    return detectAnomaliesInCalendarDays(days);
   }, [year, month]);
 
   const navigateMonth = (direction: 'prev' | 'next') => {

@@ -22,6 +22,7 @@ export interface CalendarDay {
   volatilityLevel: 'low' | 'medium' | 'high';
   performance: number;
   volume: number;
+  anomalyType?: 'anomaly' | 'recurrence' | null;
 }
 
 export interface VolatilityMetrics {
