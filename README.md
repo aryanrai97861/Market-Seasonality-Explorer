@@ -32,6 +32,56 @@ A sophisticated React application for visualizing cryptocurrency market data thr
 
 ## Local Development Setup
 
+## Testing & Test Setup
+
+### Why Automated Testing?
+Automated tests ensure your core logic and UI components work as intended, catch regressions early, and provide confidence for refactoring and adding new features. This project uses unit tests for critical logic and React components, supporting robust, maintainable development.
+
+### Frameworks Used
+- **Jest**: JavaScript/TypeScript test runner and assertion library.
+- **React Testing Library**: For testing React components in a way that simulates user interaction.
+- **ts-jest**: TypeScript preprocessor for Jest.
+- **identity-obj-proxy**: Stub CSS imports in tests.
+
+### Setup
+Testing dependencies are already included in `devDependencies`. If you need to reinstall:
+```bash
+npm install --save-dev jest ts-jest @testing-library/react @testing-library/jest-dom @testing-library/user-event identity-obj-proxy @babel/preset-env @babel/preset-react babel-jest
+```
+
+### Running Tests
+To run all tests:
+```bash
+npx jest
+```
+Or add to your `package.json` scripts:
+```json
+"scripts": {
+  "test": "jest"
+}
+```
+Then run:
+```bash
+npm test
+```
+
+### What is Tested?
+- **Critical logic functions** (e.g., volatility level calculation in `binance-api.ts`)
+- **Core React components** (e.g., `CalendarCell`)
+- Example edge cases and data scenarios
+
+### Test File Examples
+- `client/src/lib/date-utils.test.ts`: Tests volatility level logic using `BinanceAPI.calculateVolatilityLevel`.
+- `client/src/components/calendar/CalendarCell.test.tsx`: Tests rendering, selection, and volatility class logic for a calendar cell.
+
+### Configuration
+- Jest is configured in `jest.config.cjs` to handle TypeScript, React, CSS modules, and aliases.
+- Babel is used to support modern JS/JSX features if needed.
+
+### Troubleshooting
+If you see errors about JSX or TypeScript, ensure you have the correct dev dependencies and configuration files. See the comments in `jest.config.cjs` for more.
+
+
 ### Prerequisites
 
 - **Node.js 18+** and npm (required for both client and server)
