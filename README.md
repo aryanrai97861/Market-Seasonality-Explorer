@@ -66,7 +66,7 @@ A sophisticated React application for visualizing cryptocurrency market data thr
    ```bash
    npm run dev
    ```
-   The app will be available at [http://localhost:5000](http://localhost:5000) (or as configured).
+   The app will be available at [http://localhost:5000](or as configured).
 
 
 ### Production Build
@@ -81,6 +81,7 @@ npm start
 ### Environment Variables
 
 Create a `.env.local` file based on `.env.example`:
+The `.env.local` should never be commited on environment with API keys or sensitive data.
 
 ```env
 NODE_ENV=development
@@ -190,9 +191,6 @@ VITE_API_URL=http://localhost:3001/api
 
 ---
 
-**For more details, see in-app documentation or code comments.**
-
-If you encounter issues with export, API, or feature requests, please open an issue or PR.
 
 ## License
 
