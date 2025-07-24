@@ -167,7 +167,7 @@ export default function MarketCalendar() {
         )}
 
         <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
-          <div className="xl:col-span-3" id="calendar-container">
+          <div className="xl:col-span-3" id="calendar-export-root">
             <EnhancedCalendar
               year={year}
               month={month}
