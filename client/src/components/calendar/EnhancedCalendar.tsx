@@ -10,20 +10,31 @@ import WeeklyView from './WeeklyView';
 import MonthlyView from './MonthlyView';
 import { useEffect, useRef } from 'react';
 
+/**
+ * Props for EnhancedCalendar component.
+ * Handles all calendar navigation, view switching, and selection logic.
+ */
 interface EnhancedCalendarProps {
   year: number;
   month: number;
   calendarDays: CalendarDay[];
+  /** Callback to navigate calendar by month (prev/next) */
   onNavigateMonth: (direction: 'prev' | 'next') => void;
+  /** Callback when a date is selected */
   onDateSelect: (date: string) => void;
+  /** Which metrics to show in calendar cells */
   showMetrics: {
     volatility: boolean;
     liquidity: boolean;
     performance: boolean;
   };
+  /** Currently selected date (YYYY-MM-DD) */
   selectedDate?: string;
+  /** Which calendar view is active (daily/weekly/monthly) */
   currentView: CalendarViewType;
+  /** Callback to change calendar view */
   onViewChange: (view: CalendarViewType) => void;
+  /** Selected date range for range selection mode */
   selectedDateRange?: { start: string | null; end: string | null };
 }
 
@@ -59,8 +70,19 @@ export default function EnhancedCalendar({
 }: EnhancedCalendarProps) {
   const calendarRef = useRef<HTMLDivElement>(null);
 
+  /**
+   * Keyboard navigation handler for the calendar grid.
+   * Handles arrow keys (move selection), Enter (select), and Escape (blur).
+   * Only active when the calendar itself is focused.
+   *
+   * - ArrowLeft/Right: Move selection by one day
+   * - ArrowUp/Down: Move selection by week
+   * - Enter: Confirm selection
+   * - Escape: Remove focus
+   */
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Only handle key events if the calendar grid is focused
       if (!calendarRef.current?.contains(document.activeElement)) return;
       
       const allDays = calendarDays;
@@ -108,6 +130,11 @@ export default function EnhancedCalendar({
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [selectedDate, calendarDays, onDateSelect]);
   
+  /**
+   * Handles user selection of a month in MonthlyView.
+   * Navigates to the selected month and switches to daily view.
+   * @param newMonth - Index of the selected month (0 = Jan)
+   */
   const handleMonthSelect = (newMonth: number) => {
     const currentMonthIndex = new Date().getMonth();
     const direction = newMonth > currentMonthIndex ? 'next' : 'prev';
@@ -122,6 +149,12 @@ export default function EnhancedCalendar({
     onViewChange('daily');
   };
 
+  /**
+   * Renders the main calendar content based on the active view (daily/weekly/monthly).
+   * - daily: Month grid with metrics
+   * - weekly: Weekly summaries
+   * - monthly: Month cards with stats
+   */
   const renderCalendarContent = () => {
     switch (currentView) {
       case 'daily':
@@ -168,6 +201,7 @@ export default function EnhancedCalendar({
         return null;
     }
   };
+
 
   return (
     <div ref={calendarRef} tabIndex={0} className="space-y-6 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg p-2">

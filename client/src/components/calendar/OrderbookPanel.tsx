@@ -11,12 +11,21 @@ interface OrderbookData {
   asks: Order[];
 }
 
+/**
+ * Props for OrderbookPanel component.
+ * @property symbol - The crypto trading pair to subscribe to (e.g., 'BTCUSDT')
+ */
 interface OrderbookPanelProps {
   symbol: string;
 }
 
 const BINANCE_WS_URL = 'wss://stream.binance.com:9443/ws';
 
+/**
+ * OrderbookPanel subscribes to Binance WebSocket for orderbook data and displays top 10 bids/asks.
+ * Shows loading state, handles connection errors, and renders orderbook tables.
+ * @param symbol - Crypto trading pair
+ */
 export default function OrderbookPanel({ symbol }: OrderbookPanelProps) {
   const [orderbook, setOrderbook] = useState<OrderbookData | null>(null);
   const [loading, setLoading] = useState(true);

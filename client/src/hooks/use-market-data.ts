@@ -4,6 +4,13 @@ import { MarketDataPoint, DetailPanelData, QuickStatsData, CryptoPair } from '@/
 import { calculateRSI, calculateMovingAverage } from '@/lib/date-utils';
 import { calculateEMA, calculateMACD } from '@/lib/indicators';
 
+/**
+ * Custom React hook to fetch historical market data for a given symbol from Binance.
+ * Uses TanStack Query for caching and auto-refetching.
+ * @param symbol - The crypto trading pair (e.g., 'BTCUSDT')
+ * @param days - Number of days of history to fetch (default: 31)
+ * @returns Query result with historical market data
+ */
 export function useMarketData(symbol: CryptoPair, days: number = 31) {
   return useQuery({
     queryKey: ['market-data', symbol, days],
@@ -13,6 +20,11 @@ export function useMarketData(symbol: CryptoPair, days: number = 31) {
   });
 }
 
+/**
+ * Fetches the 24hr ticker stats for a symbol from Binance.
+ * @param symbol - Crypto trading pair
+ * @returns Query result with 24hr ticker data
+ */
 export function use24hrTicker(symbol: CryptoPair) {
   return useQuery({
     queryKey: ['24hr-ticker', symbol],
@@ -22,6 +34,13 @@ export function use24hrTicker(symbol: CryptoPair) {
   });
 }
 
+/**
+ * Computes detailed metrics for the dashboard panel for a selected date and symbol.
+ * Aggregates price, volatility, liquidity, and technical indicators (RSI, MA, MACD).
+ * @param symbol - Crypto trading pair
+ * @param selectedDate - Date string (YYYY-MM-DD)
+ * @returns DetailPanelData or null if unavailable
+ */
 export function useDetailPanelData(symbol: CryptoPair, selectedDate: string | null): DetailPanelData | null {
   // Fetch more days to allow for rolling calculations (e.g. 50)
   const { data: marketData } = useMarketData(symbol, 50);
@@ -90,6 +109,11 @@ export function useDetailPanelData(symbol: CryptoPair, selectedDate: string | nu
   };
 }
 
+/**
+ * Computes quick stats for the current symbol (avg volatility, total volume, monthly performance, high-vol days).
+ * @param symbol - Crypto trading pair
+ * @returns QuickStatsData or null if unavailable
+ */
 export function useQuickStats(symbol: CryptoPair): QuickStatsData | null {
   const { data: marketData } = useMarketData(symbol);
 
@@ -109,6 +133,11 @@ export function useQuickStats(symbol: CryptoPair): QuickStatsData | null {
   };
 }
 
+/**
+ * Fetches market data for multiple symbols in parallel using useQueries.
+ * @param symbols - Array of crypto trading pairs
+ * @returns Array of query results for each symbol
+ */
 export function useMultipleSymbolData(symbols: CryptoPair[]) {
   return useQueries({
     queries: symbols.map(symbol => ({

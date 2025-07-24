@@ -4,6 +4,15 @@ import { CalendarDay } from '@/types/market-data';
 import { TooltipCustom } from '@/components/ui/tooltip-custom';
 import { formatPercentage, formatVolume } from '@/lib/date-utils';
 
+/**
+ * Props for CalendarCell component.
+ * @property day - CalendarDay object for the cell
+ * @property onDateSelect - Callback for date selection
+ * @property index - Index of the cell in the grid
+ * @property showMetrics - Which metrics to display (volatility, liquidity, performance)
+ * @property isSelected - Whether this cell is selected
+ * @property selectedDateRange - Range selection for highlighting
+ */
 interface CalendarCellProps {
   day: CalendarDay;
   onDateSelect: (date: string) => void;
@@ -17,6 +26,16 @@ interface CalendarCellProps {
   selectedDateRange?: { start: string | null; end: string | null };
 }
 
+/**
+ * CalendarCell renders a single day in the calendar grid with market metrics and tooltips.
+ * Handles click and keyboard selection, accessibility, and metric icons.
+ * @param day - CalendarDay data
+ * @param onDateSelect - Date selection callback
+ * @param index - Grid index
+ * @param showMetrics - Metrics to display
+ * @param isSelected - Selection state
+ * @param selectedDateRange - Range selection state
+ */
 export default function CalendarCell({ day, onDateSelect, index, showMetrics = { volatility: true, liquidity: true, performance: true }, isSelected = false, selectedDateRange }: CalendarCellProps) {
   const getVolatilityClass = () => {
     if (!day.isCurrentMonth) return 'bg-slate-700 bg-opacity-50 text-gray-500';

@@ -3,6 +3,13 @@ import { useQueryClient } from '@tanstack/react-query';
 import { binanceWebSocket } from '@/lib/binance-websocket';
 import { MarketDataPoint, CryptoPair } from '@/types/market-data';
 
+/**
+ * React hook to subscribe to real-time Binance WebSocket data for a symbol.
+ * Updates TanStack Query cache for market data and 24hr ticker.
+ * @param symbol - Crypto trading pair
+ * @param enabled - Whether to enable the WebSocket connection
+ * @returns { isConnected, connected } - WebSocket status
+ */
 export function useBinanceWebSocket(symbol: CryptoPair, enabled: boolean = true) {
   const queryClient = useQueryClient();
   const connectedRef = useRef<boolean>(false);
